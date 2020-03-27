@@ -101,18 +101,14 @@ int main(void)
 	flag=true;
 	flag1=true;
 	k=0;
-	while (flag)
+	while (puts("enter..."),s1=GetStr())
 	{
-		printf("Enter the string\n");
-		s1=GetStr();
 		if ((atoi(s1)==0)&&(strcspn(s1,"0")==strlen(s1)))
 			flag1=false;
-		printf("Have u done with entering strings? Press 0 to finish or 1 to continue\n");
-		scanf("%d",&flag);
-		scanf("%*c");
 		if(flag1)
 			BitOfTruth(s1);
 		flag1=true;
 	}
+	puts("That's all. Bye!'");
 	free(s1);
 }
