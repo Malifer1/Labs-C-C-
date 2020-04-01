@@ -86,14 +86,12 @@ char* BitOfTruth(char* s)
 		while(i!=strcspn(s," \t"))
 		{
 			printf("%c",s[i]);
-			if(s[i]='1')
+			if(s[i]=='1')
 				count=count+1;
 			i++;
 		}
 		if(count%2==1)
 			printf("%s",bit_1);
-		else
-			printf("%s",bit_0);
 		printf(" ");
 		while ((s[i]==' ')||(s[i]=='\t'))
 			i++;
