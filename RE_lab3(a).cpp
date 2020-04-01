@@ -111,12 +111,12 @@ int main(void)
 	int i,j,k;
 	bool flag,flag1;
 	char* s1;
-	s1=(char*)malloc(sizeof(char));
+	char* s2;
 	flag1=true;
 	k=0;
 	while (puts("enter..."),s1=GetStr())
 	{
-		s1=strcat(s1," ");
+		s2=s1;
 		s1=SkipSpace(s1);
 		for(i=0;i!=strlen(s1)-1;i++)
 		{
@@ -129,7 +129,7 @@ int main(void)
 		if(flag1)
 			BitOfTruth(s1);
 		flag1=true;
+		free(s2);
 	}
 	puts("That's all. Bye!'");
-	free(s1);
 }
