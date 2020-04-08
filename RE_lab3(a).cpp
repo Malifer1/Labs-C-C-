@@ -77,6 +77,7 @@ char* BitOfTruth(char* s)
 	char bit_Sp[2]=" ";
 	char* s1;
 	s1=(char*)malloc(1);
+	*s1='\0';
 	str_len=strlen(s);
 	j=0;
 	i=0;
