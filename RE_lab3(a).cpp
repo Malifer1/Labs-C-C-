@@ -74,10 +74,11 @@ char* BitOfTruth(char* s)
 	int num,count,str_len;
 	char bit_0[2]="0";
 	char bit_1[2]="1";
+	char bit_Sp[2]=" ";
 	char* s1;
-	s1=(char*)malloc(sizeof(char));
-	s1=s;
-	str_len=strlen(s1);
+	s1=(char*)malloc(1);
+	*s1='\0';
+	str_len=strlen(s);
 	j=0;
 	i=0;
 	while (j<str_len)
@@ -85,16 +86,26 @@ char* BitOfTruth(char* s)
 		count=0;	
 		while(i!=strcspn(s," \t"))
 		{
-			printf("%c",s[i]);
-			if(s[i]='1')
+			if(s[i]=='1')
+			{
+				s1=(char*)realloc(s1,strlen(s1)+1);
 				count=count+1;
+				strncat(s1,bit_1,1);
+			}
+			else
+			{
+				s1=(char*)realloc(s1,strlen(s1)+1);
+				strncat(s1,bit_0,1);
+			}
 			i++;
 		}
 		if(count%2==1)
-			printf("%s",bit_1);
-		else
-			printf("%s",bit_0);
-		printf(" ");
+		{
+			s1=(char*)realloc(s1,strlen(s1)+1);
+			strncat(s1,bit_1,1);
+		}
+		s1=(char*)realloc(s1,strlen(s1)+1);
+		strncat(s1,bit_Sp,1);
 		while ((s[i]==' ')||(s[i]=='\t'))
 			i++;
 		s=SkipWord(s);
@@ -102,7 +113,8 @@ char* BitOfTruth(char* s)
 		j=j+i;
 		i=0;
 	}
-	printf("\n");
+	strncat(s1,"\n",1);
+	printf("%s",s1);
 	s1=NULL;
 	free(s1);
 	return 0;
@@ -113,12 +125,12 @@ int main(void)
 	int i,j,k;
 	bool flag,flag1;
 	char* s1;
-	s1=(char*)malloc(sizeof(char));
+	char* s2;
 	flag1=true;
 	k=0;
 	while (puts("enter..."),s1=GetStr())
 	{
-		s1=strcat(s1," ");
+		s2=s1;
 		s1=SkipSpace(s1);
 		for(i=0;i!=strlen(s1)-1;i++)
 		{
@@ -131,7 +143,7 @@ int main(void)
 		if(flag1)
 			BitOfTruth(s1);
 		flag1=true;
+		free(s2);
 	}
 	puts("That's all. Bye!'");
-	free(s1);
 }
