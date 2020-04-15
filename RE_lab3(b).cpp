@@ -112,6 +112,7 @@ Node *find_last_prev_letter (Node *p, Node *p1)
 {
 	while(p->next!=p1)
 		p=p->next;
+	return p;
 }
 
 Node *reorg (Node *p)
