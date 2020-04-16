@@ -25,6 +25,19 @@ Node *CreateList(const char *str)
 	return head.next;
 }
 
+Node *add_space (Node *p)
+{
+	Node *head;
+	head=p;
+	while(p->next!=NULL)
+		p=p->next;
+	p->next=(Node*)malloc(sizeof(Node));
+	p=p->next;
+	p->Head=' ';
+	p->next=NULL;
+	return head;
+}
+
 Node *DeleteList(Node *ptr)
 {
 	Node *tmp=NULL;
@@ -47,6 +60,13 @@ Node *SkipWord(Node *ptr)
 Node *SkipSpace(Node *ptr)
 {
 	while((ptr->Head==' ')||(ptr->Head=='\t'))
+		ptr=ptr->next;
+	return ptr;
+}
+
+Node *SkipSpace_ex_one(Node *ptr)
+{
+	while((ptr->next!=NULL)&&((ptr->next->Head==' ')||(ptr->next->Head=='\t')))
 		ptr=ptr->next;
 	return ptr;
 }
@@ -93,17 +113,9 @@ int getList(Node **pptr)
 	return rc;
 }
 
-Node *change_pointers (Node *p1, Node *p2)
-{
-	Node *tmp;
-	tmp=p1;
-	p1=p2;
-	p2=tmp;
-}
-
 Node *find_last_letter (Node *p)
 {
-	while((p->Head!=' ')||(p->Head!='\t'))
+	while((p->next->Head!=' ')&&(p->next->Head!='\t')&&(p->next!=NULL))
 		p=p->next;
 	return p;
 }
@@ -115,40 +127,48 @@ Node *find_last_prev_letter (Node *p, Node *p1)
 	return p;
 }
 
-Node *reorg (Node *p)
+Node *reorg (Node *ptr)
 {
 	Node *last=NULL;
 	Node *last1=NULL;
-	Node *first=p;
-	Node *first1=p;
-	Node *tmp=NULL;
+	Node *first;
+	Node *tmp;
+	Node *tmp1;
 	bool flag;
 	flag=1;
-	p=SkipSpace(p);
-	tmp=find_last_letter(p);
-	printf("%c",tmp->Head);
-	while(p!=NULL)
+	tmp=SkipWord(ptr);
+	last=find_last_letter(ptr);
+	while(tmp!=NULL)
 	{
-		last=find_last_letter(p);
-		printf("%c",last->Head);
-		do
+		while(last!=ptr)
 		{
-			printf("%d\n",flag);
-			last=find_last_prev_letter(p,last);
-			last1=last;
-			first1=first;
-			change_pointers(first,last);
-			first=first1->next;
-			last=last1;
+			last1=find_last_prev_letter(ptr,last);
+			last->next=last1;
+			if(flag)
+			{
+				first=last;
+				flag=false;
+			}
+			last=last->next;
 		}
-		while((first->next!=last)||(first!=last));
-		p=find_last_letter(p)->next;
-		if(p==NULL)
+		ptr=SkipSpace_ex_one(tmp);
+		if(ptr->next==NULL)
+			last->next=NULL;
+		else
+		{
+			last->next=ptr;
+			last=last->next;
+		}
+		if(last->next==NULL)
 			break;
-		while((p->Head==' ')||(p->Head=='\t'))
-			p=p->next;
-	}	
-		
+		tmp1=ptr->next;
+		tmp=SkipWord(tmp1);
+		ptr=ptr->next;
+		last->next=find_last_letter(ptr);
+		last=last->next;
+	}
+	putList("Result of reorganisation",first);
+	return first;
 }
 
 
@@ -159,8 +179,9 @@ int main(void)
 	while(puts("enter the string..."),getList(&ptr))
 	{
 		putList("Entered string",ptr);
+		ptr=SkipSpace(ptr);
+		ptr=add_space(ptr);
 		reorg(ptr);
-		putList("Entered string",ptr);
 		ptr=DeleteList(ptr);
 	}
 	return 0;
