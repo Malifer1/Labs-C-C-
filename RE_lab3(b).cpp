@@ -167,7 +167,6 @@ Node *reorg (Node *ptr)
 		last->next=find_last_letter(ptr);
 		last=last->next;
 	}
-	putList("Result of reorganisation",first);
 	return first;
 }
 
@@ -178,10 +177,10 @@ int main(void)
 	Node *tmp;
 	while(puts("enter the string..."),getList(&ptr))
 	{
-		putList("Entered string",ptr);
 		ptr=SkipSpace(ptr);
 		ptr=add_space(ptr);
-		reorg(ptr);
+		ptr=reorg(ptr);
+		putList("Result of reorganisation",ptr);
 		ptr=DeleteList(ptr);
 	}
 	return 0;
