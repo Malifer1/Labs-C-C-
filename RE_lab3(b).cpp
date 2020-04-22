@@ -122,8 +122,11 @@ Node *find_last_letter (Node *p)
 
 Node *find_last_prev_letter (Node *p, Node *p1)
 {
-	while(p->next!=p1)
-		p=p->next;
+	if(p!=p1)
+	{
+		while(p->next!=p1)
+			p=p->next;
+	}
 	return p;
 }
 
@@ -140,7 +143,7 @@ Node *reorg (Node *ptr)
 	last=find_last_letter(ptr);
 	while(tmp!=NULL)
 	{
-		while(last!=ptr)
+		do
 		{
 			last1=find_last_prev_letter(ptr,last);
 			last->next=last1;
@@ -150,8 +153,10 @@ Node *reorg (Node *ptr)
 				flag=false;
 			}
 			last=last->next;
-		}
+		}while(last1!=ptr);
 		ptr=SkipSpace_ex_one(tmp);
+		if(ptr->Head=='\t')
+			ptr->Head=' ';
 		if(ptr->next==NULL)
 			last->next=NULL;
 		else
