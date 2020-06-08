@@ -15,61 +15,30 @@ typedef struct Ttable
 }
 table;
 
-void swap(table *const tab, const size_t i, const size_t j)
+int SearchByKey(const table* tab, const int key)
 {
-	table tmp = tab[i];
-	tab[i] = tab[j];
-	tab[j] = tmp;
-}
-
-void Sorting(table* tab)
-{
-	size_t i,j;
-	for (i = 0; i < SIZE; i++)
-
-		for (j = i; j < SIZE; j++)
-
-			if (tab[i].key)
-			{
-				if (tab[i].key > tab[j].key)
-					swap(tab, i, j);
-
-				if (tab[i].key == tab[j].key && tab[i].version > tab[j].version)
-					swap(tab, i, j);
-			}
-}
-
-void AddNewElement(table* tab, int key, char* info)
-{
-	if (SearchByKey(tab, 0) == -1)
+	int i=0, j=0;
+	for (i; i<SIZE; i++)
 	{
-		printf("\n");
-		printf("Place for this element was not found!\n");
+		if(tab[i].key==key)
+		{
+			return i;
+			break;
+		} 
 	}
-	else
-	{
-		int version = SearchOfVersion(tab, key);
-		table Item = { key, version, info };
-		tab[SearchByKey(tab, 0)] = Item;
-		Sorting(tab);	
-	}
+
+	return -1;
 };
 
 int SearchOfVersion(const table* tab, const int key)
 {
-	size_t i;
-	int pos = SearchByKey(tab, key);
-	if (pos == -1)
-		return 1;
-	int version = 0;
-	int max_version = 0;
-	for (i = pos; pos != 0 && tab[i].key == key; i--)
-		version++;	
-	for (i = pos; tab[i].key == key; i++)
+	int i=0;
+	int version;
+	version=1;
+	for (i; i<SIZE; i++)
 	{
-		max_version = tab[i].version;
-		version = max_version;
-		version++;
+		if (tab[i].key==key)
+			version++;
 	}
 	return version;
 };
@@ -88,7 +57,7 @@ char* GetStr(void)
 	int n = 0;
 	do
 	{
-		n = scanf_s("%127[^\n]", buf, LENGTH);
+		n = scanf("%127[^\n]", buf, LENGTH);
 		if (n > 0)
 		{
 			len += strlen(buf);
@@ -103,7 +72,7 @@ char* GetStr(void)
 			strcat(string, buf);
 		}
 		else if (n == 0)
-			scanf_s("%*c");
+			scanf("%*c");
 		else
 		{
 			free(string);
@@ -117,12 +86,10 @@ void DeleteByKey(table* tab, const int key)
 {
 	int i;
 	int res = SearchByKey(tab, key);
-
 	if (res == -1)
 	{
 		printf("The element was not found!\n");
 	}
-	
 	else
 	{
 		for (i = res; tab[i].key == key; i++)
@@ -133,8 +100,53 @@ void DeleteByKey(table* tab, const int key)
 			tab[i] = Item;
 		}
 	}
-	Sorting(tab);
+//	Sorting(tab);
 };
+
+int SearchByVersion(const table* tab, const int key, const int version)
+{
+	int i=0;
+	for (i; i<SIZE; i++)
+	{
+		if ((tab[i].key==key)&&(tab[i].version==version))
+			return i;
+	}
+	return -1;
+}
+
+table* SearchKeyNewTab(table* tab, const int key)
+{
+	table* tab1=(table*)malloc(sizeof(table));
+	tab1=NULL;
+	int i,j;
+	j=0;
+	for(i=0; i<SIZE; i++)
+	{
+		if(tab[i].key==key)
+		{
+			tab1=(table*)realloc(tab1,sizeof(table)*(j+1));
+			tab1[j]=tab[i];
+			j++;
+		}
+	}
+	return tab1;
+}
+
+table* SearchVersionNewTab(table* tab, const int key, const int version)
+{
+	table* tab1=(table*)malloc(sizeof(table));
+	int i,j;
+	j=0;
+	for(i=0; i<SIZE; i++)
+	{
+		if((tab[i].key==key)&&(tab[i].version==version))
+		{
+			tab1[j]=tab[i];
+			return tab1;
+		}
+	}
+	return NULL;
+}
 
 void DeleteByVersion(table* tab, const int key, const int version)
 {
@@ -148,58 +160,21 @@ void DeleteByVersion(table* tab, const int key, const int version)
 		table Item = { 0, 0, NULL };
 		tab[res] = Item;
 	}
-	Sorting(tab);
-};
+}
 
-int SearchByKey(const table* tab, const int key)
+void AddNewElement(table* tab, int key, char* info)
 {
-	int left = 0, 
-		mid = 0,
-		right = SIZE - 1;
-
-	while (left <= right)
+	if (SearchByKey(tab, 0) == -1)
 	{
-		mid = (left + right) / 2;
-
-		if (tab[mid].key < key)
-			left = mid + 1;
-
-		else if (tab[mid].key > key)
-			right = mid - 1;
-
-		else if (tab[mid].key == key)
-			return mid;
+		printf("\n");
+		printf("Place for this element was not found!\n");
 	}
-
-	return -1;
-};
-
-int SearchByVersion(const table* tab, const int key, const int version)
-{
-	int left = 0,
-		mid = 0,
-		right = SIZE - 1;
-	while (left <= right)
+	else
 	{
-		mid = (left + right) / 2;
-		if (tab[mid].key < key)
-			left = mid + 1;
-		else if (tab[mid].key > key)
-			right = mid - 1;
-		else if (tab[mid].key == key)
-			while (left <= right)
-			{
-				mid = (left + right) / 2;
-				if (tab[mid].version < version)
-					left = mid + 1;
-				else if (tab[mid].version > version)
-					right = mid - 1;
-				else if (tab[mid].version == version)
-					return mid;
-			}
-
+		int version = SearchOfVersion(tab, key);
+		table Item = { key, version, info };
+		tab[SearchByKey(tab, 0)] = Item;	
 	}
-	return -1;
 }
 
 void Printing( table *tab)
@@ -229,7 +204,7 @@ void PrintMenu(void)
 		printf("%s\n", menu[i]);
 
 	printf("\n");
-};
+}
 
 int main()
 {
@@ -240,16 +215,16 @@ int main()
 	{
 		size_t opt = 0;
 		printf("Your option\n>");
-		scanf_s("%zu", &opt);
+		scanf("%zu", &opt);
 		if (opt == 0)
 			break;
 		else if (opt == 1)
 		{
 			int key = 0;
 			printf("Your key\n>");
-			scanf_s("%d", &key);
+			scanf("%d", &key);
 			printf("Your info\n>");
-			scanf_s("%*c");
+			scanf("%*c");
 			char* info = NULL;
 			info = GetStr();
 			if (info == NULL)
@@ -260,7 +235,7 @@ int main()
 		{
 			printf("Enter the key\n>");
 			int key = 0;
-			scanf_s("%d", &key);
+			scanf("%d", &key);
 			DeleteByKey(tab, key);
 		}
 		else if (opt == 3)
@@ -268,48 +243,48 @@ int main()
 			int key = 0,
 			version = 0;
 			printf("Enter your key\n>");
-			scanf_s("%d", &key);
+			scanf("%d", &key);
 			printf("Enter your version\n>");
-			scanf_s("%d", &version);
+			scanf("%d", &version);
 			DeleteByVersion(tab, key, version);
 		}
 		else if (opt == 4)
 		{
+			int i;
+			table* tab1;
 			int key = 0;
 			printf("Enter your key\n>");
-			scanf_s("%d", &key);
-			int pos = SearchByKey(tab, key);
-			if (pos == -1)
-				printf("The element was not found!\n");
+			scanf("%d", &key);
+			tab1 = SearchKeyNewTab(tab, key);
+			if (tab1==NULL)
+				printf("No elements with such key were found\n");
 			else
 			{
-				printf("   | KEY | VERSION | INFO |\n");
-				for (i = pos; tab[i].key == key; i--)
-					pos = i;
-				for (i = pos; tab[i].key == key; i++)
+				for(i=0; i<SIZE; i++)
 				{
-					printf("%d. |%5d|%9d|%6s|\n", i, tab[i].key, tab[i].version, tab[i].info);
+					if(tab1[i].key==key)
+						printf("%d. |%5d|%9d|%6s|\n", i, tab1[i].key, tab1[i].version, tab1[i].info);
 				}
-
 			}
+			free(tab1);
+			
 		}
 		else if (opt == 5)
 		{
-			
+			table* tab1;
 			int key = 0;
 			int version = 0;
 			printf("Enter your key\n>");
-			scanf_s("%d", &key);
+			scanf("%d", &key);
 			printf("Enter your version\n>");
-			scanf_s("%d", &version);
-			int pos = SearchByVersion(tab, key, version);
-			if (pos == -1)
-				printf("The element was not found!\n");
-			else 
-			{
-				printf("   | KEY | VERSION | INFO |\n");
-				printf("%d. |%5d|%9d|%6s|\n", pos, tab[pos].key, tab[pos].version, tab[pos].info);
-			}
+			scanf("%d", &version);
+			tab1=SearchVersionNewTab(tab,key,version);
+			if (tab1!=NULL)
+				printf("%d. |%5d|%9d|%6s|\n", i, tab1[i].key, tab1[i].version, tab1[i].info);
+			else
+				printf("No key this such version was found!\n");
+			free(tab1);
+			
 		}
 		else if (opt == 6)
 			Printing(tab);
