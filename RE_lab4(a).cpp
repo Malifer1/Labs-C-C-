@@ -5,7 +5,7 @@
 
 #define SIZE 10
 #define LENGTH 128
-#define OPTIONS 8
+#define OPTIONS 9
 
 typedef struct Ttable
 {
@@ -185,6 +185,34 @@ void Printing( table *tab)
 		printf("%zu. |%5d|%9d|%6s|\n", i, tab[i].key, tab[i].version, tab[i].info); 
 }
 
+
+void DeleteAllVersions(table* tab)
+{
+	int i, j, k, count, max_version, current_key;
+	max_version=1;
+	for (i=0; i<SIZE; i++)
+	{
+		if (tab[i].key!=0)
+		{
+			current_key=tab[i].key;
+			for (j=0; j<SIZE; j++)
+			{
+				if ((tab[i].key==tab[j].key)&&(max_version<tab[j].version))
+					max_version=tab[j].version;	
+			}
+			for (j=0 ; j<SIZE; j++)
+			{
+				if ((tab[j].key==current_key)&&(tab[j].version<max_version))
+				{
+					table Item = {0, 0, NULL};
+					tab[j]=Item;
+				}
+			}
+			max_version=1;
+		}
+	}
+}
+
 void PrintMenu(void)
 {
 	size_t i;
@@ -194,10 +222,11 @@ void PrintMenu(void)
 		"1 - Insert",
 		"2 - Erase by key",
 		"3 - Erase by key and version",
-		"4 - Search by Key",
-		"5 - Search by Version",
-		"6 - Print",
-		"7 - Show options"
+		"4 - Delete all versions except last",
+		"5 - Search by Key",
+		"6 - Search by Version",
+		"7 - Print",
+		"8 - Show options"
 	};
 
 	for (i = 0; i < OPTIONS; ++i)
@@ -248,7 +277,13 @@ int main()
 			scanf("%d", &version);
 			DeleteByVersion(tab, key, version);
 		}
-		else if (opt == 4)
+		
+		else if (opt ==4)
+		{
+			DeleteAllVersions(tab);
+			printf("All extra versions were deleted succesfully!\n");
+		}
+		else if (opt == 5)
 		{
 			int i;
 			table* tab1;
@@ -269,7 +304,7 @@ int main()
 			free(tab1);
 			
 		}
-		else if (opt == 5)
+		else if (opt == 6)
 		{
 			table* tab1;
 			int key = 0;
@@ -286,9 +321,9 @@ int main()
 			free(tab1);
 			
 		}
-		else if (opt == 6)
-			Printing(tab);
 		else if (opt == 7)
+			Printing(tab);
+		else if (opt == 8)
 		{
 			printf("\n");
 			PrintMenu();
@@ -297,5 +332,6 @@ int main()
 			printf("The wrong option!\n");
 		printf("\n");
 	}
+	free(tab);
 	return 0;
 }
