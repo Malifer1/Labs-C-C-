@@ -81,8 +81,10 @@ int add(char* key, char* info, int size)
 int rebuild(tree_t* tree) //перестраивание дерева после удаление элемента из дерева
 {
 	if (!tree) return 1;
-	if (tree->left) rebuild(tree->left);
-	if (tree->right) rebuild(tree->right);
+	if (tree->left) 
+		rebuild(tree->left);
+	if (tree->right) 
+		rebuild(tree->right);
 	if (tree->info)
 	{
 		add(tree->key, tree->info, strlen(tree->info));
@@ -96,6 +98,20 @@ int rm(char* key) //удаление элемента из дерева
 {
     tree_t* now = mtree;
 	tree_t* last = NULL;
+	tree_t* buf = NULL;
+	tree_t* last1 = NULL;
+	if (strcmp(now->key,key) == 0)
+	{
+		buf = now->left;
+		last = buf->left;
+		last1 = buf->right;
+		buf->right = now->right;
+		buf->left = NULL;
+		mtree = buf;
+		rebuild(last);
+		rebuild(last1);
+		return 0;
+	}
     if (!now) 
 		return 1;
     do{
@@ -115,7 +131,7 @@ int rm(char* key) //удаление элемента из дерева
 		last = NULL;
 	else
 	{
-		if (strcmp(last->key,now->key)<0)
+		if (strcmp(last->key,now->key) < 0)
 			last->right = NULL;
 		else
 			last->left = NULL;
@@ -182,7 +198,7 @@ int find(char* key)
         }
 	if (!now->info) 
 		return 2;
-  //  printf("%s\n", now->info);
+   // printf("%s\n", now->info);
 	return 0;
 }
 
@@ -423,13 +439,18 @@ int D_Timing(tree_t* mtree)
 	tree_t* root = mtree;
 	char* s1 = (char*)calloc(1,sizeof(char));
 	char* s = (char*)calloc(1,sizeof(char));
-	int n = 10, key[10000], k, k1, cnt = 1000000, i, m;
+	char** key = (char**)malloc(10000*sizeof(char*));
+	int n = 10, k, key1, k1, cnt = 1000000, i, m;
 	clock_t first, last;
 	srand(time(NULL));
 	while (n-- > 0)
 	{
 		for (i = 0; i<10000; ++i)
-			key[i] = rand() * rand();
+		{
+			key[i] = (char*)malloc(sizeof(char));
+			key1 = rand() * rand();
+			itoa(key1,key[i],10);
+		}
 		for ( i = 0; i< cnt;) 
 		{
 			k = rand() * rand();
@@ -441,10 +462,9 @@ int D_Timing(tree_t* mtree)
 		}
 		m  = 0;
 		first = clock();
-		for (i = 0; i<10000; ++i)
+		for (i = 0; i<5000; ++i)
 		{
-			itoa(key[i],s1,10);
-			if (find(s1)) 
+			if (rm(key[i])) 
 				++m;
 		}
 		last = clock();
