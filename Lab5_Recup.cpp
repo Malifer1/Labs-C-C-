@@ -102,6 +102,21 @@ int rm(char* key) //удаление элемента из дерева
 	tree_t* last1 = NULL;
 	if (strcmp(now->key,key) == 0)
 	{
+		if ((now->left == NULL)&&(now->right!=NULL))
+		{
+			mtree = now->right;
+			return 0;
+		}
+		if ((now->right == NULL)&&(now->left!=NULL))
+		{
+			mtree = now->left;
+			return 0;
+		}
+		if ((now->left == NULL)&&(now->right==NULL))
+		{
+			mtree = NULL;
+			return 0;
+		}
 		buf = now->left;
 		last = buf->left;
 		last1 = buf->right;
